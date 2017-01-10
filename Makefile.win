@@ -1,0 +1,54 @@
+# Project: Sudoku
+# Compiler: m68k-Amiga-OS3
+# Compiler Type: MingW 3
+# Makefile created by wxDev-C++ 6.10.2 on 10-01-17 22:13
+
+CPP       = m68k-amigaos-g++.exe
+CC        = m68k-amigaos-gcc.exe
+WINDRES   = windres.exe
+OBJ       = output/main.o output/board.o output/application.o output/board_block.o output/board_cell.o output/board_hint_switch.o output/board_guess_switch.o output/board_abstract_switch.o
+LINKOBJ   = output/main.o output/board.o output/application.o output/board_block.o output/board_cell.o output/board_hint_switch.o output/board_guess_switch.o output/board_abstract_switch.o
+LIBS      = -L"C:/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib" -L"C:/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib/libb/libnix" -s -noixemul -noixemul  
+INCS      = -I"C:/AmiDevCpp/usr/local/amiga/m68k-amigaos/sys-include"
+CXXINCS   = -I"C:/AmiDevCpp/usr/local/amiga/m68k-amigaos/sys-include"
+RCINCS    = --include-dir "C:/AMIDEV~1/include"
+BIN       = output/sudoku.exe
+DEFINES   = 
+CXXFLAGS  = $(CXXINCS) $(DEFINES)   -s -noixemul
+CFLAGS    = $(INCS) $(DEFINES)   -s -noixemul
+GPROF     = gprof.exe
+RM        = rm -f
+LINK      = m68k-amigaos-g++.exe
+
+.PHONY: all all-before all-after clean clean-custom
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	$(RM) $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(LINK) $(LINKOBJ) -o "output\sudoku.exe" $(LIBS)
+
+output/main.o: $(GLOBALDEPS) main.cpp
+	$(CPP) -c main.cpp -o output/main.o $(CXXFLAGS)
+
+output/board.o: $(GLOBALDEPS) board.cpp
+	$(CPP) -c board.cpp -o output/board.o $(CXXFLAGS)
+
+output/application.o: $(GLOBALDEPS) application.cpp
+	$(CPP) -c application.cpp -o output/application.o $(CXXFLAGS)
+
+output/board_block.o: $(GLOBALDEPS) board_block.cpp
+	$(CPP) -c board_block.cpp -o output/board_block.o $(CXXFLAGS)
+
+output/board_cell.o: $(GLOBALDEPS) board_cell.cpp
+	$(CPP) -c board_cell.cpp -o output/board_cell.o $(CXXFLAGS)
+
+output/board_hint_switch.o: $(GLOBALDEPS) board_hint_switch.cpp
+	$(CPP) -c board_hint_switch.cpp -o output/board_hint_switch.o $(CXXFLAGS)
+
+output/board_guess_switch.o: $(GLOBALDEPS) board_guess_switch.cpp
+	$(CPP) -c board_guess_switch.cpp -o output/board_guess_switch.o $(CXXFLAGS)
+
+output/board_abstract_switch.o: $(GLOBALDEPS) board_abstract_switch.cpp
+	$(CPP) -c board_abstract_switch.cpp -o output/board_abstract_switch.o $(CXXFLAGS)
