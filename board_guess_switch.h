@@ -9,7 +9,8 @@
 class BoardGuessSwitch : public BoardAbstractSwitch {
 public:
     BoardGuessSwitch(struct Window *window, int value);
-    void draw();
+    int getTopOffset();
+    int getFontColor();
 };
 
 #endif

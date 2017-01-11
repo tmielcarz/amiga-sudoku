@@ -92,8 +92,7 @@ void Application::loop() {
                     case IDCMP_MOUSEBUTTONS: /* The status of the mouse buttons has changed. */
                         switch ( msgCode ) {
                             case SELECTDOWN: /* The left mouse button has been pressed. */
-                                // TODO obs³uga klikniêcia !!!
-                                printf("x = %d, y = %d\n", xCoord, yCoord);
+                                board->onClick(xCoord, yCoord);
                                 break;
                         }
                     default:

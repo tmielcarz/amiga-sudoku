@@ -10,29 +10,13 @@ public:
     int value;
     BOOL checked;
 
-    BoardAbstractSwitch(struct Window *window, int value);
-    virtual void draw() = 0;
+    BoardAbstractSwitch(struct Window *window, int value);    
     BOOL toggle();
-};
+    BOOL contains(int x, int y);
+    void draw();
 
-static struct TextAttr ctrlNumbersFont = {
-    (STRPTR) "topaz.font", 8, FS_NORMAL, FPF_ROMFONT
-};
-
-static SHORT singleCtrlNumberPoints[] = {
-    0, 0,
-    30, 0,
-    30, 15,
-    0, 15,
-    0, 0
-};
-
-static struct Border singleCtrlNumber = {
-    0, 0,
-    1, 0,
-    JAM1,
-    5, singleCtrlNumberPoints,
-    NULL
+    virtual int getTopOffset() = 0;
+    virtual int getFontColor() = 0;
 };
 
 #endif

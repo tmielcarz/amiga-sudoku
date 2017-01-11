@@ -9,7 +9,8 @@
 class BoardHintSwitch : public BoardAbstractSwitch {
 public:
     BoardHintSwitch(struct Window *window, int value);
-    void draw();
+    int getTopOffset();
+    int getFontColor();
 };
 
 #endif
