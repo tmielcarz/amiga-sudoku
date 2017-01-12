@@ -51,3 +51,24 @@ void BoardBlock::draw() {
         }
     }
 }
+
+BOOL BoardBlock::contains(int x, int y) {
+    int x0 = col * 3 * Board::CELL_WIDTH;
+    int x1 = x0 + 3 * Board::CELL_WIDTH;
+    int y0 = row * 3 * Board::CELL_HEIGHT;
+    int y1 = y0 + 3 * Board::CELL_HEIGHT;
+
+    return (x >= x0 && x < x1 && y >= y0 && y < y1);
+}
+
+BoardCell* BoardBlock::findCellByXY(int x, int y) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (cells[i][j]->contains(x, y)) {
+                return cells[i][j];
+            }
+        }
+    }
+
+    return NULL;
+}

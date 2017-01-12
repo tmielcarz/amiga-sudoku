@@ -5,6 +5,7 @@
 #include <proto/intuition.h>
 
 #include "board_block.h"
+#include "board_cell.h"
 #include "board_hint_switch.h"
 #include "board_guess_switch.h"
 
@@ -24,6 +25,7 @@ public:
     void draw();
     void onClick(int x, int y);
     int toggleSwitch(int oldValue, int newValue, BoardAbstractSwitch *switches[]);
+    void Board::updateCell(BoardCell *cell);
 };
 
 #endif

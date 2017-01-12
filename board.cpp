@@ -17,8 +17,8 @@ Board::Board(struct Window *window) {
         guessSwitches[i] = new BoardGuessSwitch(window, i);
     }
 
-    activeHintSwitch = 0;
-    activeGuessSwitch = 0;
+    activeHintSwitch = -1;
+    activeGuessSwitch = -1;
 }
 
 Board::~Board() {
@@ -50,29 +50,62 @@ void Board::draw() {
 }
 
 int Board::toggleSwitch(int oldValue, int newValue, BoardAbstractSwitch *switches[]) {
+    if (newValue == -1) {
+        return -1;
+    }
+
     if (oldValue == newValue) {
         switches[newValue]->toggle();
         switches[newValue]->draw();
-        return 0;
+        return -1;
     }
 
-    if (oldValue != 0) {
+    if (oldValue != -1) {
         switches[oldValue]->toggle();
         switches[oldValue]->draw();
     }
+
     switches[newValue]->toggle();
     switches[newValue]->draw();
     return newValue;
 }
 
+void Board::updateCell(BoardCell *cell) {
+    if (activeHintSwitch == -1 && activeGuessSwitch == -1) {
+        cell->value = activeGuessSwitch + 1;
+        cell->redraw();
+    }
+
+    if (activeHintSwitch > -1) {
+        cell->hint = cell->hint ^ 1 << activeHintSwitch;
+        cell->redraw();
+    }
+
+    if (activeGuessSwitch > -1) {
+        // TODO sprawdzic czy nie fixed
+        cell->value = activeGuessSwitch + 1;
+        cell->redraw();
+    }
+}
+
 void Board::onClick(int x, int y) {
     // printf("%d %d\n", x, y);
     if (x <= 9 * Board::CELL_WIDTH) {
-
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (blocks[i][j]->contains(x, y)) {
+                    BoardCell *cell = blocks[i][j]->BoardBlock::findCellByXY(x, y);
+                    if (cell != NULL) {
+                        updateCell(cell);
+                    }
+                }
+            }
+        }
     } else {
         for (int i = 0; i < 9; i++) {
             if (guessSwitches[i]->contains(x, y)) {
                 activeGuessSwitch = toggleSwitch(activeGuessSwitch, i, (BoardAbstractSwitch**)guessSwitches);
+                activeHintSwitch = toggleSwitch(activeHintSwitch, activeHintSwitch, (BoardAbstractSwitch**)hintSwitches);
                 return;
             }
         }
@@ -80,6 +113,7 @@ void Board::onClick(int x, int y) {
         for (int i = 0; i < 9; i++) {
             if (hintSwitches[i]->contains(x, y)) {
                 activeHintSwitch = toggleSwitch(activeHintSwitch, i, (BoardAbstractSwitch**)hintSwitches);
+                activeGuessSwitch = toggleSwitch(activeGuessSwitch, activeGuessSwitch, (BoardAbstractSwitch**)guessSwitches);
                 return;
             }
         }
