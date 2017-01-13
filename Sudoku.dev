@@ -1,7 +1,7 @@
 [Project]
 FileName=Sudoku.dev
 Name=Sudoku
-UnitCount=15
+UnitCount=17
 PchHead=-1
 PchSource=-1
 Ver=3
@@ -207,7 +207,17 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit17]
-FileName=board_mouse_handler.h
+FileName=puzzle.cpp
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit16]
+FileName=puzzle.h
 CompileCpp=1
 Folder=
 Compile=1

@@ -58,7 +58,17 @@ BoardCell::BoardCell(struct Window *window, int col, int row) {
 void BoardCell::draw() {
     DrawBorder(window->RPort, &singleCell, col * Board::CELL_WIDTH, row * Board::CELL_HEIGHT);
 
-    // TODO fixed values
+    if (isFixed) {
+        char c[1];
+        c[0] = value + 48;
+        struct IntuiText text = { 2, 0, JAM2, 0, 0, &font, (UBYTE *) c, NULL };
+
+        PrintIText(
+            window->RPort, &text,
+            col * Board::CELL_WIDTH + Board::CELL_WIDTH / 2 - 4,
+            row * Board::CELL_HEIGHT + Board::CELL_HEIGHT / 2 - 4
+        );
+    }
 }
 
 void BoardCell::redraw() {

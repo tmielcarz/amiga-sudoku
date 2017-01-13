@@ -71,6 +71,10 @@ int Board::toggleSwitch(int oldValue, int newValue, BoardAbstractSwitch *switche
 }
 
 void Board::updateCell(BoardCell *cell) {
+    if (cell->isFixed) {
+        return;
+    }
+
     if (activeHintSwitch == -1 && activeGuessSwitch == -1) {
         cell->value = activeGuessSwitch + 1;
         cell->redraw();
@@ -82,7 +86,6 @@ void Board::updateCell(BoardCell *cell) {
     }
 
     if (activeGuessSwitch > -1) {
-        // TODO sprawdzic czy nie fixed
         cell->value = activeGuessSwitch + 1;
         cell->redraw();
     }
@@ -115,6 +118,23 @@ void Board::onClick(int x, int y) {
                 activeHintSwitch = toggleSwitch(activeHintSwitch, i, (BoardAbstractSwitch**)hintSwitches);
                 activeGuessSwitch = toggleSwitch(activeGuessSwitch, activeGuessSwitch, (BoardAbstractSwitch**)guessSwitches);
                 return;
+            }
+        }
+    }
+}
+
+void Board::load(Puzzle *puzzle) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < 3; k++) {
+                for (int l = 0; l < 3; l++) {
+                    BoardCell *cell = blocks[i][j]->findCellByLocal(k, l);
+                    int fixedValue = puzzle->values[3 * j + l][3 * i + k];
+                    if (cell != NULL && fixedValue > 0) {
+                        cell->isFixed = TRUE;
+                        cell->value = fixedValue;
+                    }
+                }
             }
         }
     }

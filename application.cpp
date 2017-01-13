@@ -60,8 +60,12 @@ void Application::loop() {
     UWORD msgCode;
     ULONG msgClass;
     BOOL end = FALSE;
+    Puzzle *puzzle;
     
+    puzzle = createPuzzles();
+
     Board *board = new Board(window);
+    board->load(puzzle);
     board->draw();
 
     windowSignal = 1L << window->UserPort->mp_SigBit;
@@ -105,4 +109,21 @@ void Application::loop() {
     delete board;
 
     return;
+}
+
+Puzzle* Application::createPuzzles() {
+    int values[9][9] = {
+        {0, 9, 0, 2, 0, 1, 0, 0, 0},
+        {0, 0, 4, 0, 0, 8, 0, 7, 0},
+        {0, 7, 0, 0, 6, 9, 0, 0, 8},
+        {1, 4, 0, 0, 0, 5, 8, 0, 0},
+        {0, 6, 0, 0, 0, 0, 0, 2, 0},
+        {0, 0, 8, 6, 0, 0, 0, 4, 7},
+        {2, 0, 0, 3, 4, 0, 0, 6, 0},
+        {0, 3, 0, 1, 0, 0, 7, 0, 0},
+        {0, 0, 0, 8, 0, 2, 0, 1, 0}
+    };
+
+    Puzzle *puzzle = new Puzzle(1, values);
+    return puzzle;
 }

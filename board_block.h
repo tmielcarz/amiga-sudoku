@@ -17,7 +17,8 @@ public:
     BoardBlock(struct Window *window, int col, int row);
     ~BoardBlock();
     BOOL contains(int x, int y);
-    BoardCell* BoardBlock::findCellByXY(int x, int y);
+    BoardCell* findCellByXY(int x, int y);
+    BoardCell* findCellByLocal(int x, int y);
     void draw();
 };
 

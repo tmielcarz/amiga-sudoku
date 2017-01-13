@@ -6,6 +6,8 @@
 #include <proto/graphics.h>
 #include <proto/dos.h>
 
+#include "puzzle.h"
+
 class Application {
     struct GfxBase *gfxBase;
     struct IntuitionBase *intuitionBase;
@@ -16,6 +18,7 @@ public:
     ~Application();
 
     void loop();
+    Puzzle* createPuzzles();
 };
 
 #endif

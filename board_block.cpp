@@ -72,3 +72,7 @@ BoardCell* BoardBlock::findCellByXY(int x, int y) {
 
     return NULL;
 }
+
+BoardCell* BoardBlock::findCellByLocal(int x, int y) {
+    return cells[x][y];
+}
