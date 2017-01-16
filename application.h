@@ -13,12 +13,23 @@ class Application {
     struct IntuitionBase *intuitionBase;
     struct Window *window;
 
+    struct MsgPort *timerMsgPort;
+    struct timerequest *timerIO;
+    struct timeval tv;
+    ULONG timerSignal;
+    BOOL timerWasSent;
+
+    int initTimer();
+    void killTimer();
+    void sendTimerRequest();
+    void readTimerMessage();
+
+    Puzzle* createPuzzles();
+
 public:
     Application();
     ~Application();
-
     void loop();
-    Puzzle* createPuzzles();
 };
 
 #endif

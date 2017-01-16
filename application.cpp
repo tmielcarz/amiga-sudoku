@@ -1,45 +1,52 @@
 #include <stdio.h>
+#include <devices/timer.h>
 
 #include "application.h"
 #include "board.h"
 
 Application::Application() {    
     gfxBase = (struct GfxBase *)OpenLibrary( "graphics.library", 0L );
-    
-    if ( gfxBase != NULL) {
-        intuitionBase = (struct IntuitionBase *)OpenLibrary( "intuition.library", 0L );
-    
-        if ( intuitionBase != NULL ) {
-            window = (struct Window *)OpenWindowTags( NULL,
-                WA_Left, 0,
-                WA_Top, 0,
-                WA_Width, 640,
-                WA_Height, 256,
-                WA_Title, (ULONG)"Sudoku",
-                WA_DepthGadget, TRUE,
-                WA_CloseGadget, TRUE,
-                WA_SizeGadget, TRUE,
-                WA_DragBar, TRUE,
-                WA_GimmeZeroZero, TRUE,
-                WA_ReportMouse, TRUE,
-                WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
-                TAG_END );
-    
-            if (window == NULL ) {
-                printf( "Unable to open the window!\n" );
-                Exit(-1);
-            }
-        } else {
-            printf( "Unable to open the intuition.library!\n" );
-            Exit(-2);
-        }
-    } else {
+    if ( gfxBase == NULL ) {
         printf( "Unable to open the graphics.library!\n" );
+        Exit(-1);
+    }
+    
+    intuitionBase = (struct IntuitionBase *)OpenLibrary( "intuition.library", 0L );
+    if ( intuitionBase == NULL ) {
+        printf( "Unable to open the intuition.library!\n" );
+        Exit(-2);
+    }
+    
+    window = (struct Window *)OpenWindowTags( NULL,
+        WA_Left, 0,
+        WA_Top, 0,
+        WA_Width, 640,
+        WA_Height, 256,
+        WA_Title, (ULONG)"Sudoku",
+        WA_DepthGadget, TRUE,
+        WA_CloseGadget, TRUE,
+        WA_SizeGadget, TRUE,
+        WA_DragBar, TRUE,
+        WA_GimmeZeroZero, TRUE,
+        WA_ReportMouse, TRUE,
+        WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
+        TAG_END );
+
+    if ( window == NULL ) {
+        printf( "Unable to open the window!\n" );
         Exit(-3);
     }
+    
+
+	if ( initTimer() != 0 ) {
+        printf( "Unable to open the timer!\n" );
+        Exit(-4);
+	}
 }
 
 Application::~Application() {
+    killTimer();
+
     if ( window != NULL ) {
         CloseWindow( window );
     }
@@ -51,6 +58,66 @@ Application::~Application() {
     if ( gfxBase != NULL ) {
         CloseLibrary( (struct Library *)gfxBase );
     }
+}
+
+int Application::initTimer() {
+    timerMsgPort = CreateMsgPort();
+    if (timerMsgPort == 0) {
+        return -1;
+    }
+
+	timerIO = (struct timerequest*) CreateIORequest(timerMsgPort, sizeof(struct timerequest));
+	if (timerIO == 0) {
+		return -1;
+	}
+
+	LONG error = OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest*)timerIO, 0);
+	if (error != 0) {
+		return -1;
+	}
+
+	timerSignal = 1L << timerMsgPort->mp_SigBit;
+
+	sendTimerRequest();
+
+    timerWasSent = TRUE;
+
+	return 0;
+}
+
+void Application::killTimer() {
+	if (timerIO) {
+		if (timerWasSent) {
+			AbortIO((struct IORequest*)timerIO);
+			WaitIO((struct IORequest*)timerIO);
+		}
+		CloseDevice((struct IORequest*)timerIO);
+		DeleteIORequest(timerIO);
+	}
+
+	if (timerMsgPort) {
+		DeleteMsgPort((struct MsgPort*)timerMsgPort);
+	}
+}
+
+void Application::sendTimerRequest() {
+	tv.tv_secs = 1;
+	tv.tv_micro = 0;
+    timerIO->tr_time = tv;
+    timerIO->tr_node.io_Command = TR_ADDREQUEST;
+
+	SendIO((struct IORequest*)timerIO);
+}
+
+void Application::readTimerMessage() {
+	while (TRUE) {
+		struct IntuiMessage* msg = (struct IntuiMessage*)GetMsg(timerMsgPort);
+		if (msg == NULL) {
+			break;
+		}
+	}
+
+	sendTimerRequest();
 }
 
 void Application::loop() {
@@ -70,8 +137,12 @@ void Application::loop() {
 
     windowSignal = 1L << window->UserPort->mp_SigBit;
         
+    int counter = 0;
+
     while ( !end && window ) {
-        signals = Wait( windowSignal );
+        signals = Wait( windowSignal | timerSignal );
+
+        // printf("%d \n", signals);
         
         /* Check the signal bit for our message port. Will be true if these is a message. */
         if ( signals & windowSignal ) {
@@ -103,6 +174,11 @@ void Application::loop() {
                         break;
                 }
             }
+        }
+
+        if ( signals & timerSignal ) {
+            readTimerMessage();
+            printf("%d \n", counter++);
         }
     }
     
