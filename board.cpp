@@ -19,6 +19,7 @@ Board::Board(struct Window *window) {
 
     activeHintSwitch = -1;
     activeGuessSwitch = -1;
+    elapsedTime = 0;
 }
 
 Board::~Board() {
@@ -47,6 +48,8 @@ void Board::draw() {
         hintSwitches[i]->draw();
         guessSwitches[i]->draw();
     }
+
+    updateTime();
 }
 
 int Board::toggleSwitch(int oldValue, int newValue, BoardAbstractSwitch *switches[]) {
@@ -89,6 +92,42 @@ void Board::updateCell(BoardCell *cell) {
         cell->value = activeGuessSwitch + 1;
         cell->redraw();
     }
+}
+
+void Board::updateTime() {
+    int seconds = elapsedTime % 60;
+    int minutes = elapsedTime / 60;
+
+    char strSeconds[3];
+    if ( seconds < 10 ) {
+        sprintf( strSeconds, "0%d", seconds);
+    } else {
+        sprintf( strSeconds, "%d", seconds);
+    }
+
+    char strMinutes[3];
+    if ( minutes < 10 ) {
+        sprintf( strMinutes, "0%d", minutes);
+    } else {
+        sprintf( strMinutes, "%d", minutes);
+    }
+
+    char strTime[6];
+    sprintf( strTime, "%s:%s", strMinutes, strSeconds );
+    
+    struct TextAttr font = { (STRPTR) "topaz.font", 8, FS_NORMAL };
+    struct IntuiText text = { 1, 0, JAM2, 0, 0, &font, (UBYTE *) strTime, NULL };
+
+    PrintIText(
+        window->RPort, &text,
+        20 + 9 * Board::CELL_WIDTH + 30,
+        9 * Board::CELL_HEIGHT - 16
+    );
+}
+
+void Board::onTimeTick() {
+    elapsedTime++;
+    updateTime();
 }
 
 void Board::onClick(int x, int y) {

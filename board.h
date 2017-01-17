@@ -18,6 +18,11 @@ private:
     BoardGuessSwitch *guessSwitches[9];
     int activeHintSwitch;
     int activeGuessSwitch;
+    int elapsedTime;
+
+    void updateTime();
+    void updateCell(BoardCell *cell);
+    int toggleSwitch(int oldValue, int newValue, BoardAbstractSwitch *switches[]);
 public:
     static const int CELL_WIDTH = 54;
     static const int CELL_HEIGHT = 27;
@@ -27,8 +32,7 @@ public:
     void load(Puzzle *puzzle);
     void draw();
     void onClick(int x, int y);
-    void updateCell(BoardCell *cell);
-    int toggleSwitch(int oldValue, int newValue, BoardAbstractSwitch *switches[]);
+    void onTimeTick();
 };
 
 #endif

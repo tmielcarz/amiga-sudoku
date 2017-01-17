@@ -78,8 +78,6 @@ void Application::loop() {
     windowSignal = 1L << window->UserPort->mp_SigBit;
     timerSignal = 1L << timer->timerMsgPort->mp_SigBit;
         
-    int counter = 0;
-
     while ( !end && window ) {
         signals = Wait( windowSignal | timerSignal );
 
@@ -117,7 +115,7 @@ void Application::loop() {
 
         if ( signals & timerSignal ) {
             timer->readTimerMessage();
-            printf("%d \n", counter++);
+            board->onTimeTick();
         }
     }
     
