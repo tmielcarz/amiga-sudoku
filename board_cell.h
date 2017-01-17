@@ -13,6 +13,7 @@ public:
     int value;
     int hint;
     BOOL isFixed;
+    BOOL isValid;
 
     BoardCell(struct Window *window, int col, int row);
     BOOL contains(int x, int y);

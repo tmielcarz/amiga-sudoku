@@ -73,6 +73,32 @@ int Board::toggleSwitch(int oldValue, int newValue, BoardAbstractSwitch *switche
     return newValue;
 }
 
+void Board::validate() {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < 3; k++) {
+                for (int l = 0; l < 3; l++) {
+                    BoardCell *cell = blocks[i][j]->findCellByLocal(k, l);
+                    if ( !cell->isFixed && !cell->isValid ) {
+                        cell->isValid = TRUE;
+                        cell->redraw();
+                    }
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            blocks[i][j]->validate();
+        }
+    }
+
+    // TODO validate cols and rows
+
+    // TODO check finish condition
+}
+
 void Board::updateCell(BoardCell *cell) {
     if (cell->isFixed) {
         return;
@@ -92,6 +118,8 @@ void Board::updateCell(BoardCell *cell) {
         cell->value = activeGuessSwitch + 1;
         cell->redraw();
     }
+
+    validate();
 }
 
 void Board::updateTime() {

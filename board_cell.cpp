@@ -53,6 +53,7 @@ BoardCell::BoardCell(struct Window *window, int col, int row) {
     this->value = 0;
     this->hint = 0;
     this->isFixed = FALSE;
+    this->isValid = TRUE;
 }
 
 void BoardCell::draw() {
@@ -75,8 +76,10 @@ void BoardCell::redraw() {
     // printf( "Drawing cell [%d, %d]!\n", col, row );
     DrawBorder(window->RPort, &singleCell, col * Board::CELL_WIDTH, row * Board::CELL_HEIGHT);
 
-    char c[1];
+    char c[3];
     c[0] = 32;
+    c[1] = 32;
+    c[2] = 0;
     struct IntuiText text = { 1, 0, JAM2, 0, 0, &font, (UBYTE *) c, NULL };
 
     PrintIText(
@@ -96,8 +99,17 @@ void BoardCell::redraw() {
     }
 
     if (value > 0) {
-        char c[1];
-        c[0] = value + 48;
+        char c[3];
+        
+        if (isValid) {
+            c[0] = value + 48;
+            c[1] = 0;
+        } else {
+            c[0] = value + 48;
+            c[1] = '!';
+            c[2] = 0;
+        }
+
         struct IntuiText text = { 1, 0, JAM2, 0, 0, &font, (UBYTE *) c, NULL };
     
         PrintIText(

@@ -41,6 +41,33 @@ BoardBlock::~BoardBlock() {
     }
 }
 
+void BoardBlock::validate() {
+    int blockValues = 0;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if ( cells[i][j]->value > 0 ) {
+                int cellValue = 1 << cells[i][j]->value;
+                if ( (blockValues & cellValue) == 0 ) {
+                    blockValues += cellValue;
+                } else {
+                    markAsInvalid( cells[i][j]->value );
+                }
+            }
+        }
+    }
+}
+
+void BoardBlock::markAsInvalid(int value) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if ( !cells[i][j]->isFixed && cells[i][j]->value == value ) {
+                cells[i][j]->isValid = FALSE;
+                cells[i][j]->redraw();
+            }
+        }
+    }
+}
+
 void BoardBlock::draw() {
     // printf( "Drawing block [%d, %d]!\n", col, row );
     DrawBorder(window->RPort, &singleBlock, col * 3 * Board::CELL_WIDTH, row * 3 * Board::CELL_HEIGHT);

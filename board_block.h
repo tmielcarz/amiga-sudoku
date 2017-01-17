@@ -14,6 +14,8 @@ private:
     int row;
 
     BoardCell *cells[3][3];
+
+    void markAsInvalid(int value);
 public:
     BoardBlock(struct Window *window, int col, int row);
     ~BoardBlock();
@@ -21,6 +23,7 @@ public:
     BoardCell* findCellByXY(int x, int y);
     BoardCell* findCellByLocal(int x, int y);
     void draw();
+    void validate();
 };
 
 #endif

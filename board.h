@@ -20,6 +20,7 @@ private:
     int activeGuessSwitch;
     int elapsedTime;
 
+    void validate();
     void updateTime();
     void updateCell(BoardCell *cell);
     int toggleSwitch(int oldValue, int newValue, BoardAbstractSwitch *switches[]);
