@@ -5,6 +5,7 @@
 #include <proto/intuition.h>
 
 class BoardCell {
+private:
     struct Window *window;
     int col;
     int row;

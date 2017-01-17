@@ -7,6 +7,7 @@
 #include "board_cell.h"
 
 class BoardBlock {
+private:
     struct Window *window;
 
     int col;

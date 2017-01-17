@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <devices/timer.h>
 
 #include "application.h"
 #include "board.h"
@@ -37,15 +36,15 @@ Application::Application() {
         Exit(-3);
     }
     
-
-	if ( initTimer() != 0 ) {
+    timer = new Timer();
+	if ( timer->initTimer() != 0 ) {
         printf( "Unable to open the timer!\n" );
         Exit(-4);
 	}
 }
 
 Application::~Application() {
-    killTimer();
+    timer->killTimer();
 
     if ( window != NULL ) {
         CloseWindow( window );
@@ -60,69 +59,10 @@ Application::~Application() {
     }
 }
 
-int Application::initTimer() {
-    timerMsgPort = CreateMsgPort();
-    if (timerMsgPort == 0) {
-        return -1;
-    }
-
-	timerIO = (struct timerequest*) CreateIORequest(timerMsgPort, sizeof(struct timerequest));
-	if (timerIO == 0) {
-		return -1;
-	}
-
-	LONG error = OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest*)timerIO, 0);
-	if (error != 0) {
-		return -1;
-	}
-
-	timerSignal = 1L << timerMsgPort->mp_SigBit;
-
-	sendTimerRequest();
-
-    timerWasSent = TRUE;
-
-	return 0;
-}
-
-void Application::killTimer() {
-	if (timerIO) {
-		if (timerWasSent) {
-			AbortIO((struct IORequest*)timerIO);
-			WaitIO((struct IORequest*)timerIO);
-		}
-		CloseDevice((struct IORequest*)timerIO);
-		DeleteIORequest(timerIO);
-	}
-
-	if (timerMsgPort) {
-		DeleteMsgPort((struct MsgPort*)timerMsgPort);
-	}
-}
-
-void Application::sendTimerRequest() {
-	tv.tv_secs = 1;
-	tv.tv_micro = 0;
-    timerIO->tr_time = tv;
-    timerIO->tr_node.io_Command = TR_ADDREQUEST;
-
-	SendIO((struct IORequest*)timerIO);
-}
-
-void Application::readTimerMessage() {
-	while (TRUE) {
-		struct IntuiMessage* msg = (struct IntuiMessage*)GetMsg(timerMsgPort);
-		if (msg == NULL) {
-			break;
-		}
-	}
-
-	sendTimerRequest();
-}
-
 void Application::loop() {
     ULONG signals;
     ULONG windowSignal;
+    ULONG timerSignal;
     struct IntuiMessage *message;
     UWORD msgCode;
     ULONG msgClass;
@@ -136,14 +76,13 @@ void Application::loop() {
     board->draw();
 
     windowSignal = 1L << window->UserPort->mp_SigBit;
+    timerSignal = 1L << timer->timerMsgPort->mp_SigBit;
         
     int counter = 0;
 
     while ( !end && window ) {
         signals = Wait( windowSignal | timerSignal );
 
-        // printf("%d \n", signals);
-        
         /* Check the signal bit for our message port. Will be true if these is a message. */
         if ( signals & windowSignal ) {
             WORD xCoord, yCoord;
@@ -177,7 +116,7 @@ void Application::loop() {
         }
 
         if ( signals & timerSignal ) {
-            readTimerMessage();
+            timer->readTimerMessage();
             printf("%d \n", counter++);
         }
     }

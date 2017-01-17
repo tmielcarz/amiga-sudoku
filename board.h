@@ -11,6 +11,7 @@
 #include "board_guess_switch.h"
 
 class Board {
+private:
     struct Window *window;
     BoardBlock *blocks[3][3];
     BoardHintSwitch *hintSwitches[9];

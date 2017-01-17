@@ -6,23 +6,15 @@
 #include <proto/graphics.h>
 #include <proto/dos.h>
 
+#include "timer.h"
 #include "puzzle.h"
 
 class Application {
+private:
     struct GfxBase *gfxBase;
     struct IntuitionBase *intuitionBase;
     struct Window *window;
-
-    struct MsgPort *timerMsgPort;
-    struct timerequest *timerIO;
-    struct timeval tv;
-    ULONG timerSignal;
-    BOOL timerWasSent;
-
-    int initTimer();
-    void killTimer();
-    void sendTimerRequest();
-    void readTimerMessage();
+    Timer *timer;
 
     Puzzle* createPuzzles();
 

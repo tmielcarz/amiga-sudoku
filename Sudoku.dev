@@ -1,7 +1,7 @@
 [Project]
 FileName=Sudoku.dev
 Name=Sudoku
-UnitCount=17
+UnitCount=19
 PchHead=-1
 PchSource=-1
 Ver=3
@@ -218,6 +218,26 @@ BuildCmd=
 
 [Unit16]
 FileName=puzzle.h
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit18]
+FileName=timer.cpp
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit19]
+FileName=timer.h
 CompileCpp=1
 Folder=
 Compile=1
