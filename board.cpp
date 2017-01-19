@@ -3,7 +3,6 @@
 #include "board.h"
 
 Board::Board(struct Window *window) {
-    // printf( "Creating board!\n" );
     this->window = window;
 
     for (int i = 0; i < 3; i++) {
@@ -11,6 +10,8 @@ Board::Board(struct Window *window) {
             blocks[i][j] = new BoardBlock(window, i, j);
         }
     }
+
+    createColsAndRows();
 
     for (int i = 0; i < 9; i++) {
         hintSwitches[i] = new BoardHintSwitch(window, i);
@@ -20,10 +21,10 @@ Board::Board(struct Window *window) {
     activeHintSwitch = -1;
     activeGuessSwitch = -1;
     elapsedTime = 0;
+    isGameFinished = FALSE;
 }
 
 Board::~Board() {
-    // printf( "Destroying board!\n" );
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             delete blocks[i][j];
@@ -36,8 +37,25 @@ Board::~Board() {
     }
 }
 
+void Board::createColsAndRows() {
+    for (int i = 0; i < 9; i++) {
+        cols[i] = new BoardLine();
+        rows[i] = new BoardLine();
+    }
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < 3; k++) {    
+                for (int l = 0; l < 3; l++) {
+                    cols[k + 3 * i]->addCell(l + 3 * j, blocks[i][j]->findCellByLocal(k, l));
+                    rows[k + 3 * j]->addCell(l + 3 * i, blocks[i][j]->findCellByLocal(l, k));
+                }            
+            }
+        }
+    }
+}
+
 void Board::draw() {
-    // printf( "Drawing board!\n" );
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             blocks[i][j]->draw();
@@ -74,6 +92,7 @@ int Board::toggleSwitch(int oldValue, int newValue, BoardAbstractSwitch *switche
 }
 
 void Board::validate() {
+    // clear invalid flags
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             for (int k = 0; k < 3; k++) {
@@ -95,8 +114,27 @@ void Board::validate() {
     }
 
     // TODO validate cols and rows
+    for (int i = 0; i < 9; i++) {
+        cols[i]->validate();
+        rows[i]->validate();
+    }
+}
 
-    // TODO check finish condition
+BOOL Board::checkForSuccess() {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < 3; k++) {
+                for (int l = 0; l < 3; l++) {
+                    BoardCell *cell = blocks[i][j]->findCellByLocal(k, l);
+                    if ( !cell->isValid || cell->value == 0 ) {
+                        return FALSE;
+                    }
+                }
+            }
+        }
+    }
+
+    return TRUE;
 }
 
 void Board::updateCell(BoardCell *cell) {
@@ -120,6 +158,11 @@ void Board::updateCell(BoardCell *cell) {
     }
 
     validate();
+    
+    if (checkForSuccess()) {
+        isGameFinished = TRUE;
+        printf("SUCCESS !!!\n");
+    }
 }
 
 void Board::updateTime() {
@@ -154,12 +197,13 @@ void Board::updateTime() {
 }
 
 void Board::onTimeTick() {
-    elapsedTime++;
-    updateTime();
+    if (!isGameFinished) {
+        elapsedTime++;
+        updateTime();
+    }
 }
 
 void Board::onClick(int x, int y) {
-    // printf("%d %d\n", x, y);
     if (x <= 9 * Board::CELL_WIDTH) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {

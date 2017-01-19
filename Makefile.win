@@ -1,13 +1,13 @@
 # Project: Sudoku
 # Compiler: m68k-Amiga-OS3
 # Compiler Type: MingW 3
-# Makefile created by wxDev-C++ 6.10.2 on 18-01-17 00:36
+# Makefile created by wxDev-C++ 6.10.2 on 19-01-17 23:54
 
 CPP       = m68k-amigaos-g++.exe
 CC        = m68k-amigaos-gcc.exe
 WINDRES   = windres.exe
-OBJ       = output/main.o output/board.o output/application.o output/board_block.o output/board_cell.o output/board_hint_switch.o output/board_guess_switch.o output/board_abstract_switch.o output/puzzle.o output/timer.o
-LINKOBJ   = output/main.o output/board.o output/application.o output/board_block.o output/board_cell.o output/board_hint_switch.o output/board_guess_switch.o output/board_abstract_switch.o output/puzzle.o output/timer.o
+OBJ       = output/main.o output/board.o output/application.o output/board_block.o output/board_cell.o output/board_hint_switch.o output/board_guess_switch.o output/board_abstract_switch.o output/puzzle.o output/timer.o output/board_line.o
+LINKOBJ   = output/main.o output/board.o output/application.o output/board_block.o output/board_cell.o output/board_hint_switch.o output/board_guess_switch.o output/board_abstract_switch.o output/puzzle.o output/timer.o output/board_line.o
 LIBS      = -L"C:/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib" -L"C:/AmiDevCpp/usr/local/amiga/m68k-amigaos/lib/libb/libnix" -s -noixemul -noixemul  
 INCS      = -I"C:/AmiDevCpp/usr/local/amiga/m68k-amigaos/sys-include"
 CXXINCS   = -I"C:/AmiDevCpp/usr/local/amiga/m68k-amigaos/sys-include"
@@ -58,3 +58,6 @@ output/puzzle.o: $(GLOBALDEPS) puzzle.cpp
 
 output/timer.o: $(GLOBALDEPS) timer.cpp
 	$(CPP) -c timer.cpp -o output/timer.o $(CXXFLAGS)
+
+output/board_line.o: $(GLOBALDEPS) board_line.cpp
+	$(CPP) -c board_line.cpp -o output/board_line.o $(CXXFLAGS)
