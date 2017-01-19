@@ -28,6 +28,9 @@ private:
     BOOL checkForSuccess();
     void updateTime();
     void updateCell(BoardCell *cell);
+    void removeHints(BoardCell *cell);
+    void removeHints(BoardLine *line, int value);
+    void removeHints(BoardBlock *block, int value);
     void createColsAndRows();
     int toggleSwitch(int oldValue, int newValue, BoardAbstractSwitch *switches[]);    
 public:

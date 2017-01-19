@@ -137,6 +137,39 @@ BOOL Board::checkForSuccess() {
     return TRUE;
 }
 
+void Board::removeHints(BoardCell *cell) {
+    if (cell->value > 0 && cell->isValid) {
+        removeHints(cols[cell->col], cell->value);
+        removeHints(rows[cell->row], cell->value);
+        removeHints(blocks[cell->col / 3][cell->row / 3], cell->value);
+    }
+}
+
+void Board::removeHints(BoardLine *line, int value) {
+    int mask = ~(1 << (value - 1));
+    for (int i = 0; i < 9; i++) {
+        int oldValue = line->cells[i]->hint;
+        line->cells[i]->hint = line->cells[i]->hint & mask;
+        if (oldValue != line->cells[i]->hint) {
+            line->cells[i]->redraw();
+        }
+    }
+}
+
+void Board::removeHints(BoardBlock *block, int value) {
+    int mask = ~(1 << (value - 1));
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            BoardCell *cell = block->findCellByLocal(i, j);
+            int oldValue = cell->hint;
+            cell->hint = cell->hint & mask;
+            if (oldValue != cell->hint) {
+                cell->redraw();
+            }
+        }
+    }
+}
+
 void Board::updateCell(BoardCell *cell) {
     if (cell->isFixed) {
         return;
@@ -158,6 +191,8 @@ void Board::updateCell(BoardCell *cell) {
     }
 
     validate();
+
+    removeHints(cell);
     
     if (checkForSuccess()) {
         isGameFinished = TRUE;

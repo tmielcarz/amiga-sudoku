@@ -5,9 +5,9 @@
 
 class BoardLine {
 private:
-    BoardCell *cells[9];
     void markAsInvalid(int value);
 public:
+    BoardCell *cells[9];
     void addCell(int pos, BoardCell *cell);
     void validate();
 };

@@ -7,9 +7,9 @@
 class BoardCell {
 private:
     struct Window *window;
+public:
     int col;
     int row;
-public:
     int value;
     int hint;
     BOOL isFixed;
