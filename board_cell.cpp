@@ -60,8 +60,9 @@ void BoardCell::draw() {
     DrawBorder(window->RPort, &singleCell, col * Board::CELL_WIDTH, row * Board::CELL_HEIGHT);
 
     if (isFixed) {
-        char c[1];
+        char c[2];
         c[0] = value + 48;
+        c[1] = 0;
         struct IntuiText text = { 2, 0, JAM2, 0, 0, &font, (UBYTE *) c, NULL };
 
         PrintIText(

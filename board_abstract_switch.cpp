@@ -37,7 +37,9 @@ void BoardAbstractSwitch::draw() {
         this->getTopOffset() + (this->value / 3) * 15
     );
 
-    char c[] = {value + 49};
+    char c[2];
+    c[0] = value + 49;
+    c[1] = 0;    
     struct TextAttr font = { (STRPTR) "topaz.font", 8, this->checked ? FSF_BOLD : FS_NORMAL, FPF_ROMFONT };
     struct IntuiText text = { this->getFontColor(), 0, JAM2, 0, 0, &font, (UBYTE *) c, NULL };
 
