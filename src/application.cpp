@@ -1,7 +1,9 @@
 #include <stdio.h>
 
 #include "application.h"
-#include "board.h"
+#include "abstract_screen.h"
+#include "board/board.h"
+#include "title/title_screen.h"
 
 Application::Application() {    
     gfxBase = (struct GfxBase *)OpenLibrary( "graphics.library", 0L );
@@ -67,13 +69,18 @@ void Application::loop() {
     UWORD msgCode;
     ULONG msgClass;
     BOOL end = FALSE;
-    Puzzle *puzzle;
-    
+
+    AbstractScreen *currentScreen = NULL;
+
+    Puzzle *puzzle;    
     puzzle = createPuzzles();
 
     Board *board = new Board(window);
     board->load(puzzle);
-    board->draw();
+    
+    currentScreen = board;
+    
+    currentScreen->draw();
 
     windowSignal = 1L << window->UserPort->mp_SigBit;
     timerSignal = 1L << timer->timerMsgPort->mp_SigBit;
@@ -86,7 +93,7 @@ void Application::loop() {
             WORD xCoord, yCoord;
         
             /* There may be more than one message, so keep processing messages until there are no more. */
-            while ( message = (struct IntuiMessage *)GetMsg(window->UserPort) ) {
+            while ( (message = (struct IntuiMessage *)GetMsg(window->UserPort)) ) {
                 /* Copy the necessary information from the message. */
                 msgClass = message->Class;
                 msgCode = message->Code;
@@ -104,7 +111,7 @@ void Application::loop() {
                     case IDCMP_MOUSEBUTTONS: /* The status of the mouse buttons has changed. */
                         switch ( msgCode ) {
                             case SELECTDOWN: /* The left mouse button has been pressed. */
-                                board->onClick(xCoord, yCoord);
+                                currentScreen->onClick(xCoord, yCoord);
                                 break;
                         }
                     default:
@@ -115,7 +122,7 @@ void Application::loop() {
 
         if ( signals & timerSignal ) {
             timer->readTimerMessage();
-            board->onTimeTick();
+            currentScreen->onTimeTick();
         }
     }
     

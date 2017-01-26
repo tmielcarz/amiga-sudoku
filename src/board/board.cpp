@@ -2,9 +2,7 @@
 
 #include "board.h"
 
-Board::Board(struct Window *window) {
-    this->window = window;
-
+Board::Board(struct Window *window) : AbstractScreen(window) {
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             blocks[i][j] = new BoardBlock(window, i, j);
@@ -56,6 +54,8 @@ void Board::createColsAndRows() {
 }
 
 void Board::draw() {
+    SetRast(window->RPort, 0);
+    
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             blocks[i][j]->draw();
@@ -239,7 +239,7 @@ void Board::onTimeTick() {
 }
 
 void Board::onClick(int x, int y) {
-    if (x <= 9 * Board::CELL_WIDTH) {
+    if (x <= 9 * Board::CELL_WIDTH) {        
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (blocks[i][j]->contains(x, y)) {
