@@ -5,11 +5,14 @@
 #include <proto/intuition.h>
 #include <proto/graphics.h>
 
+#include "eventbus/event_bus.h"
+
 class AbstractScreen {
 protected:
     struct Window *window;
+    EventBus *eventBus;
 public:    
-    AbstractScreen(struct Window *window);
+    AbstractScreen(struct Window *window, EventBus *eventBus);
     virtual ~AbstractScreen() {};
     
     virtual void draw() = 0;

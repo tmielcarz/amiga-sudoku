@@ -3,13 +3,15 @@
 
 #include "../abstract_screen.h"
 #include "../puzzle.h"
+#include "../eventbus/event_listener.h"
+#include "../eventbus/event.h"
 #include "board_block.h"
 #include "board_line.h"
 #include "board_cell.h"
 #include "board_hint_switch.h"
 #include "board_guess_switch.h"
 
-class Board : public AbstractScreen {
+class Board : public AbstractScreen, public EventListener {
 private:    
     BoardBlock *blocks[3][3];
     BoardLine *rows[9];
@@ -34,11 +36,12 @@ public:
     static const int CELL_WIDTH = 54;
     static const int CELL_HEIGHT = 27;
 
-    Board(struct Window *window);
+    Board(struct Window *window, EventBus *eventBus);
     ~Board();    
     void draw();
     void onClick(int x, int y);
     void onTimeTick();
+    void onEvent(Event *e);    
     
     void load(Puzzle *puzzle);    
 };

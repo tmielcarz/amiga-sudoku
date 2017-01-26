@@ -1,6 +1,8 @@
 #include "title_screen.h"
 
-TitleScreen::TitleScreen(struct Window *window) : AbstractScreen(window) {}
+#include <stdio.h>
+
+TitleScreen::TitleScreen(struct Window *window, EventBus *eventBus) : AbstractScreen(window, eventBus) {}
 
 TitleScreen::~TitleScreen() {}
 
@@ -10,10 +12,15 @@ void TitleScreen::draw() {
 }
 
 void TitleScreen::onClick(int x, int y) {
-    
+    Event *e = new Event(Event::NEW_GAME);
+    eventBus->notifyAll(e);
+    delete e;    
 }
 
 void TitleScreen::onTimeTick() {
     
 }
 
+void TitleScreen::onEvent(Event *e) {
+    printf("Title :: %d\n", e->getType());
+}

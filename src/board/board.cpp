@@ -1,8 +1,8 @@
-#include <stdio.h>
-
 #include "board.h"
 
-Board::Board(struct Window *window) : AbstractScreen(window) {
+#include <stdio.h>
+
+Board::Board(struct Window *window, EventBus *eventBus) : AbstractScreen(window, eventBus) {
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             blocks[i][j] = new BoardBlock(window, i, j);
@@ -284,4 +284,8 @@ void Board::load(Puzzle *puzzle) {
             }
         }
     }
+}
+
+void Board::onEvent(Event *e) {
+    printf("Board :: %d\n", e->getType());
 }

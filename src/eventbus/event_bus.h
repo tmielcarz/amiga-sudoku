@@ -12,7 +12,7 @@ public:
     ~EventBus();
     
     void registerListener(EventListener *listener);
-    void notifyAll(Event e);
+    void notifyAll(Event *e);
 };
 
 #endif /* EVENT_BUS_H */

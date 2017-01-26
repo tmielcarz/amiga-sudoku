@@ -24,11 +24,7 @@ void EventBus::registerListener(EventListener *listener) {
     lastListener->next = listener;
 }
 
-void EventBus::notifyAll(Event e) {
-    if (this->root == NULL) {
-        return;
-    }
-    
+void EventBus::notifyAll(Event *e) {
     EventListener *listener = this->root;
     while (listener != NULL) {
         listener->onEvent(e);

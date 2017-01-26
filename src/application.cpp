@@ -1,9 +1,6 @@
 #include <stdio.h>
 
 #include "application.h"
-#include "abstract_screen.h"
-#include "board/board.h"
-#include "title/title_screen.h"
 
 Application::Application() {    
     gfxBase = (struct GfxBase *)OpenLibrary( "graphics.library", 0L );
@@ -39,13 +36,30 @@ Application::Application() {
     }
     
     timer = new Timer();
-	if ( timer->initTimer() != 0 ) {
+    if ( timer->initTimer() != 0 ) {
         printf( "Unable to open the timer!\n" );
         Exit(-4);
-	}
+    }
+    
+    eventBus = new EventBus();
+    
+    currentScreen = NULL;
+    board = new Board(window, eventBus);
+    titleScreen = new TitleScreen(window, eventBus);
+                    
+    eventBus->registerListener((EventListener*) this);
+    eventBus->registerListener((EventListener*) board);
+    eventBus->registerListener((EventListener*) titleScreen);
+    
 }
 
-Application::~Application() {
+Application::~Application() {        
+    delete eventBus;
+    
+    delete board;
+    
+    delete titleScreen;
+    
     timer->killTimer();
 
     if ( window != NULL ) {
@@ -69,19 +83,11 @@ void Application::loop() {
     UWORD msgCode;
     ULONG msgClass;
     BOOL end = FALSE;
-
-    AbstractScreen *currentScreen = NULL;
-
-    Puzzle *puzzle;    
-    puzzle = createPuzzles();
-
-    Board *board = new Board(window);
-    board->load(puzzle);
+            
+    Event *e = new Event(Event::INITIALIZE);
+    eventBus->notifyAll(e);
+    delete e;
     
-    currentScreen = board;
-    
-    currentScreen->draw();
-
     windowSignal = 1L << window->UserPort->mp_SigBit;
     timerSignal = 1L << timer->timerMsgPort->mp_SigBit;
         
@@ -111,7 +117,9 @@ void Application::loop() {
                     case IDCMP_MOUSEBUTTONS: /* The status of the mouse buttons has changed. */
                         switch ( msgCode ) {
                             case SELECTDOWN: /* The left mouse button has been pressed. */
-                                currentScreen->onClick(xCoord, yCoord);
+                                if (currentScreen != NULL) {
+                                    currentScreen->onClick(xCoord, yCoord);
+                                }
                                 break;
                         }
                     default:
@@ -122,13 +130,35 @@ void Application::loop() {
 
         if ( signals & timerSignal ) {
             timer->readTimerMessage();
-            currentScreen->onTimeTick();
+            if (currentScreen != NULL) {
+                currentScreen->onTimeTick();
+            }
         }
-    }
-    
-    delete board;
+    }        
 
     return;
+}
+
+void Application::onEvent(Event *e) {
+    printf("Application :: %d\n", e->getType());
+    
+    if (e->getType() == Event::INITIALIZE) {
+        currentScreen = titleScreen;
+        currentScreen->draw();        
+    }
+    
+    if (e->getType() == Event::NEW_GAME) {
+        Puzzle *puzzle;    
+        puzzle = createPuzzles();
+        
+        board->load(puzzle);
+        currentScreen = board;
+        currentScreen->draw();
+    }
+
+    if (e->getType() == Event::END_GAME) {
+        
+    }    
 }
 
 Puzzle* Application::createPuzzles() {
