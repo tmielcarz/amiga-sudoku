@@ -31,3 +31,9 @@ void EventBus::notifyAll(Event *e) {
         listener = listener->next;
     }    
 }
+
+void EventBus::notifyAll(SHORT type) {
+    Event *e = new Event(type);
+    this->notifyAll(e);
+    delete e;        
+}

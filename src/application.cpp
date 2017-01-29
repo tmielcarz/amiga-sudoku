@@ -84,9 +84,7 @@ void Application::loop() {
     ULONG msgClass;
     BOOL end = FALSE;
             
-    Event *e = new Event(Event::INITIALIZE);
-    eventBus->notifyAll(e);
-    delete e;
+    eventBus->notifyAll(Event::INITIALIZE);
     
     windowSignal = 1L << window->UserPort->mp_SigBit;
     timerSignal = 1L << timer->timerMsgPort->mp_SigBit;
@@ -140,7 +138,7 @@ void Application::loop() {
 }
 
 void Application::onEvent(Event *e) {
-    printf("Application :: %d\n", e->getType());
+    // printf("Application :: %d\n", e->getType());
     
     if (e->getType() == Event::INITIALIZE) {
         currentScreen = titleScreen;

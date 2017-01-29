@@ -196,6 +196,7 @@ void Board::updateCell(BoardCell *cell) {
     
     if (checkForSuccess()) {
         isGameFinished = TRUE;
+        // TODO send event
         printf("SUCCESS !!!\n");
     }
 }

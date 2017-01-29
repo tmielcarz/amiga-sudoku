@@ -13,6 +13,7 @@ public:
     
     void registerListener(EventListener *listener);
     void notifyAll(Event *e);
+    void notifyAll(SHORT type);
 };
 
 #endif /* EVENT_BUS_H */
