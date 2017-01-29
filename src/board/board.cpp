@@ -288,5 +288,5 @@ void Board::load(Puzzle *puzzle) {
 }
 
 void Board::onEvent(Event *e) {
-    printf("Board :: %d\n", e->getType());
+    // printf("Board :: %d\n", e->getType());
 }
