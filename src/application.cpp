@@ -159,19 +159,16 @@ void Application::onEvent(Event *e) {
     }    
 }
 
-Puzzle* Application::createPuzzles() {
-    int values[9][9] = {
-        {0, 9, 0, 2, 0, 1, 0, 0, 0},
-        {0, 0, 4, 0, 0, 8, 0, 7, 0},
-        {0, 7, 0, 0, 6, 9, 0, 0, 8},
-        {1, 4, 0, 0, 0, 5, 8, 0, 0},
-        {0, 6, 0, 0, 0, 0, 0, 2, 0},
-        {0, 0, 8, 6, 0, 0, 0, 4, 7},
-        {2, 0, 0, 3, 4, 0, 0, 6, 0},
-        {0, 3, 0, 1, 0, 0, 7, 0, 0},
-        {0, 0, 0, 8, 0, 2, 0, 1, 0}
-    };
-
+Puzzle* Application::createPuzzles() {    
+    FILE *input;
+    int values[9][9];
+    
+    input = fopen("puzzle.dat", "r");
+    for (int i = 0; i < 9; i++) {
+        fscanf(input, "%d %d %d %d %d %d %d %d %d", &values[i][0], &values[i][1], &values[i][2], &values[i][3], &values[i][4], &values[i][5], &values[i][6], &values[i][7], &values[i][8]);
+    }    
+    fclose(input);
+    
     Puzzle *puzzle = new Puzzle(1, values);
     return puzzle;
 }
