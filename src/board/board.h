@@ -42,6 +42,7 @@ public:
     ~Board();    
     void draw();
     void onClick(int x, int y);
+    void onMove(int x, int y);
     void onTimeTick();
     void onEvent(Event *e);    
     

@@ -17,6 +17,7 @@ public:
     
     virtual void draw() = 0;
     virtual void onClick(int x, int y) = 0;
+    virtual void onMove(int x, int y) = 0;
     virtual void onTimeTick() = 0;    
 };
 

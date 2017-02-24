@@ -239,6 +239,10 @@ void Board::onTimeTick() {
     }
 }
 
+void Board::onMove(int x, int y) {
+    
+}
+
 void Board::onClick(int x, int y) {
     if (x <= Board::X_OFFSET + 9 * Board::CELL_WIDTH) {        
         for (int i = 0; i < 3; i++) {

@@ -34,7 +34,7 @@ Application::Application() {
         640, 256, 
         0, 1, 
         IDCMP_CLOSEWINDOW | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE | IDCMP_RAWKEY, 
-        BORDERLESS | GIMMEZEROZERO | SMART_REFRESH, 
+        GIMMEZEROZERO | REPORTMOUSE | ACTIVATE | SMART_REFRESH, 
         NULL, NULL, 
         NULL, 
         NULL, NULL, 
@@ -141,7 +141,14 @@ void Application::loop() {
                     case IDCMP_CLOSEWINDOW:
                         end = TRUE;
                         break;
+                    case IDCMP_MOUSEMOVE:
+                        // printf("MOVE %d %d\n", xCoord, yCoord);
+                        if (currentScreen != NULL) {
+                            currentScreen->onMove(xCoord, yCoord);
+                        }                        
+                        break;
                     case IDCMP_MOUSEBUTTONS:
+                        // printf("BUTTON %d %d\n", xCoord, yCoord);
                         switch ( msgCode ) {
                             case SELECTDOWN:
                                 if (currentScreen != NULL) {

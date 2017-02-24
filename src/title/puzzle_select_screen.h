@@ -11,12 +11,18 @@ public:
     ~PuzzleSelectScreen();
     void draw();
     void onClick(int x, int y);
+    void onMove(int x, int y);
     void onTimeTick();
     void onEvent(Event *e);
 private:
     char filenamesSize;
-    char filenames[100][100];   
+    char filenames[100][100];
+    char selectedFilenameIdx;
+    char previousFilenameIdx;
+    
     void refreshFileList();
+    void redraw();
+    void checkRedraw(int i);
 };
 
 #endif
