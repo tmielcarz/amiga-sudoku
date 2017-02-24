@@ -35,6 +35,8 @@ private:
 public:
     static const int CELL_WIDTH = 54;
     static const int CELL_HEIGHT = 27;
+    static const int X_OFFSET = 10;
+    static const int Y_OFFSET = 5;
 
     Board(struct Window *window, EventBus *eventBus);
     ~Board();    

@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "application.h"
+#include "title/puzzle_select_event.h"
 
 Application::Application() {    
     gfxBase = (struct GfxBase *)OpenLibrary( "graphics.library", 0L );
@@ -15,30 +16,51 @@ Application::Application() {
         Exit(-2);
     }
     
-    window = (struct Window *)OpenWindowTags( NULL,
-        WA_Left, 0,
-        WA_Top, 0,
-        WA_Width, 640,
-        WA_Height, 256,
-        WA_Title, (ULONG)"Sudoku",
-        WA_DepthGadget, TRUE,
-        WA_CloseGadget, TRUE,
-        WA_SizeGadget, TRUE,
-        WA_DragBar, TRUE,
-        WA_GimmeZeroZero, TRUE,
-        WA_ReportMouse, TRUE,
-        WA_IDCMP, IDCMP_CLOSEWINDOW | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE,
-        TAG_END );
-
+    struct NewScreen screenDef = {
+        0, 0,
+        640, 256,
+        2, 
+        0, 1,
+        HIRES,
+        CUSTOMSCREEN | SCREENQUIET,
+        NULL,
+        NULL,
+        NULL,
+        NULL,        
+    };
+    
+    struct NewWindow windowDef = { 
+        0, 0, 
+        640, 256, 
+        0, 1, 
+        IDCMP_CLOSEWINDOW | IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE | IDCMP_RAWKEY, 
+        BORDERLESS | GIMMEZEROZERO | SMART_REFRESH, 
+        NULL, NULL, 
+        NULL, 
+        NULL, NULL, 
+        100, 50, 
+        640, 256, 
+        CUSTOMSCREEN,
+    };       
+    
+    screen = (struct Screen *)OpenScreen(&screenDef);
+    if ( screen == NULL ) {
+        printf( "Unable to open the screen!\n" );
+        Exit(-3);
+    }
+    
+    windowDef.Screen = screen;
+    
+    window = (struct Window *)OpenWindow(&windowDef);
     if ( window == NULL ) {
         printf( "Unable to open the window!\n" );
-        Exit(-3);
+        Exit(-4);
     }
     
     timer = new Timer();
     if ( timer->initTimer() != 0 ) {
         printf( "Unable to open the timer!\n" );
-        Exit(-4);
+        Exit(-5);
     }
     
     eventBus = new EventBus();
@@ -46,11 +68,12 @@ Application::Application() {
     currentScreen = NULL;
     board = new Board(window, eventBus);
     titleScreen = new TitleScreen(window, eventBus);
+    puzzleSelectScreen = new PuzzleSelectScreen(window, eventBus);
                     
     eventBus->registerListener((EventListener*) this);
     eventBus->registerListener((EventListener*) board);
     eventBus->registerListener((EventListener*) titleScreen);
-    
+    eventBus->registerListener((EventListener*) puzzleSelectScreen);    
 }
 
 Application::~Application() {        
@@ -60,10 +83,16 @@ Application::~Application() {
     
     delete titleScreen;
     
+    delete puzzleSelectScreen;
+    
     timer->killTimer();
 
     if ( window != NULL ) {
         CloseWindow( window );
+    }
+
+    if ( screen != NULL ) {
+        CloseScreen( screen );
     }
     
     if ( intuitionBase != NULL ) {
@@ -92,29 +121,29 @@ void Application::loop() {
     while ( !end && window ) {
         signals = Wait( windowSignal | timerSignal );
 
-        /* Check the signal bit for our message port. Will be true if these is a message. */
         if ( signals & windowSignal ) {
             WORD xCoord, yCoord;
         
-            /* There may be more than one message, so keep processing messages until there are no more. */
             while ( (message = (struct IntuiMessage *)GetMsg(window->UserPort)) ) {
-                /* Copy the necessary information from the message. */
                 msgClass = message->Class;
                 msgCode = message->Code;
                 xCoord = message->MouseX - window->BorderLeft;
                 yCoord = message->MouseY - window->BorderTop;
                 
-                /* Reply as soon as possible. */
                 ReplyMsg((struct Message *)message);
             
-                /* Take the proper action in response to the message. */
                 switch ( msgClass ) {
-                    case IDCMP_CLOSEWINDOW: /* User pressed the close window gadget. */
+                    case IDCMP_RAWKEY:
+                        if (msgCode == 69) { // ESC
+                            end = TRUE;
+                        }
+                        break;
+                    case IDCMP_CLOSEWINDOW:
                         end = TRUE;
                         break;
-                    case IDCMP_MOUSEBUTTONS: /* The status of the mouse buttons has changed. */
+                    case IDCMP_MOUSEBUTTONS:
                         switch ( msgCode ) {
-                            case SELECTDOWN: /* The left mouse button has been pressed. */
+                            case SELECTDOWN:
                                 if (currentScreen != NULL) {
                                     currentScreen->onClick(xCoord, yCoord);
                                 }
@@ -145,13 +174,20 @@ void Application::onEvent(Event *e) {
         currentScreen->draw();        
     }
     
-    if (e->getType() == Event::NEW_GAME) {
+    if (e->getType() == Event::NEW_GAME) {        
+        currentScreen = puzzleSelectScreen;
+        currentScreen->draw();
+    }
+    
+    if (e->getType() == Event::PUZZLE_SELECTED) {
+        PuzzleSelectEvent *pse = (PuzzleSelectEvent *)e;
+        
         Puzzle *puzzle;    
-        puzzle = createPuzzles();
+        puzzle = createPuzzles(pse->filename);
         
         board->load(puzzle);
         currentScreen = board;
-        currentScreen->draw();
+        currentScreen->draw();        
     }
 
     if (e->getType() == Event::END_GAME) {
@@ -159,11 +195,11 @@ void Application::onEvent(Event *e) {
     }    
 }
 
-Puzzle* Application::createPuzzles() {    
+Puzzle* Application::createPuzzles(char* filename) {    
     FILE *input;
     int values[9][9];
-    
-    input = fopen("puzzle.dat", "r");
+        
+    input = fopen(filename, "r");
     for (int i = 0; i < 9; i++) {
         fscanf(input, "%d %d %d %d %d %d %d %d %d", &values[i][0], &values[i][1], &values[i][2], &values[i][3], &values[i][4], &values[i][5], &values[i][6], &values[i][7], &values[i][8]);
     }    

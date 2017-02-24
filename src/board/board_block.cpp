@@ -70,7 +70,7 @@ void BoardBlock::markAsInvalid(int value) {
 
 void BoardBlock::draw() {
     // printf( "Drawing block [%d, %d]!\n", col, row );
-    DrawBorder(window->RPort, &singleBlock, col * 3 * Board::CELL_WIDTH, row * 3 * Board::CELL_HEIGHT);
+    DrawBorder(window->RPort, &singleBlock, Board::X_OFFSET + col * 3 * Board::CELL_WIDTH, Board::Y_OFFSET + row * 3 * Board::CELL_HEIGHT);
 
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -80,9 +80,9 @@ void BoardBlock::draw() {
 }
 
 BOOL BoardBlock::contains(int x, int y) {
-    int x0 = col * 3 * Board::CELL_WIDTH;
+    int x0 = Board::X_OFFSET + col * 3 * Board::CELL_WIDTH;
     int x1 = x0 + 3 * Board::CELL_WIDTH;
-    int y0 = row * 3 * Board::CELL_HEIGHT;
+    int y0 = Board::Y_OFFSET + row * 3 * Board::CELL_HEIGHT;
     int y1 = y0 + 3 * Board::CELL_HEIGHT;
 
     return (x >= x0 && x < x1 && y >= y0 && y < y1);

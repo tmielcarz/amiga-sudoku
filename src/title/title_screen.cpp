@@ -19,11 +19,14 @@ void TitleScreen::draw() {
     struct IntuiText author = { 1, 0, JAM2, 0, 0, &smallFont, (UBYTE *) "author: Tomasz 'g0trek' Mielcarz", NULL };
     PrintIText( window->RPort, &author, 320-160, 90 ); 
     
-    struct IntuiText version = { 1, 0, JAM2, 0, 0, &smallFont, (UBYTE *) "version: 1.0.0 @ 2017-01-29", NULL };
+    struct IntuiText version = { 1, 0, JAM2, 0, 0, &smallFont, (UBYTE *) "version: 1.0.0 @ 2017-02-23", NULL };
     PrintIText( window->RPort, &version, 320-130, 110 );        
 
     struct IntuiText start = { 1, 0, JAM2, 0, 0, &smallFont, (UBYTE *) "press left mouse button to start", NULL };
     PrintIText( window->RPort, &start, 320-150, 150 );            
+    
+    struct IntuiText exit = { 1, 0, JAM2, 0, 0, &smallFont, (UBYTE *) "press ESC key to exit", NULL };
+    PrintIText( window->RPort, &exit, 320-100, 170 );                
 }
 
 void TitleScreen::onClick(int x, int y) {

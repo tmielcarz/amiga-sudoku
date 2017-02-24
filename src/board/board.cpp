@@ -240,7 +240,7 @@ void Board::onTimeTick() {
 }
 
 void Board::onClick(int x, int y) {
-    if (x <= 9 * Board::CELL_WIDTH) {        
+    if (x <= Board::X_OFFSET + 9 * Board::CELL_WIDTH) {        
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (blocks[i][j]->contains(x, y)) {

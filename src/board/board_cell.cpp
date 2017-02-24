@@ -57,7 +57,7 @@ BoardCell::BoardCell(struct Window *window, int col, int row) {
 }
 
 void BoardCell::draw() {
-    DrawBorder(window->RPort, &singleCell, col * Board::CELL_WIDTH, row * Board::CELL_HEIGHT);
+    DrawBorder(window->RPort, &singleCell, Board::X_OFFSET + col * Board::CELL_WIDTH, Board::Y_OFFSET + row * Board::CELL_HEIGHT);
 
     if (isFixed) {
         char c[2];
@@ -67,15 +67,15 @@ void BoardCell::draw() {
 
         PrintIText(
             window->RPort, &text,
-            col * Board::CELL_WIDTH + Board::CELL_WIDTH / 2 - 4,
-            row * Board::CELL_HEIGHT + Board::CELL_HEIGHT / 2 - 4
+            Board::X_OFFSET + col * Board::CELL_WIDTH + Board::CELL_WIDTH / 2 - 4,
+            Board::Y_OFFSET + row * Board::CELL_HEIGHT + Board::CELL_HEIGHT / 2 - 4
         );
     }
 }
 
 void BoardCell::redraw() {
     // printf( "Drawing cell [%d, %d]!\n", col, row );
-    DrawBorder(window->RPort, &singleCell, col * Board::CELL_WIDTH, row * Board::CELL_HEIGHT);
+    DrawBorder(window->RPort, &singleCell, Board::X_OFFSET + col * Board::CELL_WIDTH, Board::Y_OFFSET + row * Board::CELL_HEIGHT);
 
     char c[3];
     c[0] = 32;
@@ -85,8 +85,8 @@ void BoardCell::redraw() {
 
     PrintIText(
         window->RPort, &text,
-        col * Board::CELL_WIDTH + Board::CELL_WIDTH / 2 - 4,
-        row * Board::CELL_HEIGHT + Board::CELL_HEIGHT / 2 - 4
+        Board::X_OFFSET + col * Board::CELL_WIDTH + Board::CELL_WIDTH / 2 - 4,
+        Board::Y_OFFSET + row * Board::CELL_HEIGHT + Board::CELL_HEIGHT / 2 - 4
     );
 
     int i;
@@ -94,8 +94,8 @@ void BoardCell::redraw() {
         IntuiText text = (value > 0 || ((hint & (1 << i)) == 0)) ? hintsOff[i] : hintsOn[i];
         PrintIText(
             window->RPort, &text,
-            col * Board::CELL_WIDTH + Board::CELL_WIDTH / 2,
-            row * Board::CELL_HEIGHT + Board::CELL_HEIGHT / 2
+            Board::X_OFFSET + col * Board::CELL_WIDTH + Board::CELL_WIDTH / 2,
+            Board::Y_OFFSET + row * Board::CELL_HEIGHT + Board::CELL_HEIGHT / 2
         );
     }
 
@@ -115,16 +115,16 @@ void BoardCell::redraw() {
     
         PrintIText(
             window->RPort, &text,
-            col * Board::CELL_WIDTH + Board::CELL_WIDTH / 2 - 4, 
-            row * Board::CELL_HEIGHT + Board::CELL_HEIGHT / 2 - 4
+            Board::X_OFFSET + col * Board::CELL_WIDTH + Board::CELL_WIDTH / 2 - 4, 
+            Board::Y_OFFSET + row * Board::CELL_HEIGHT + Board::CELL_HEIGHT / 2 - 4
         );
     }
 }
 
 BOOL BoardCell::contains(int x, int y) {
-    int x0 = col * Board::CELL_WIDTH;
+    int x0 = Board::X_OFFSET + col * Board::CELL_WIDTH;
     int x1 = x0 + Board::CELL_WIDTH;
-    int y0 = row * Board::CELL_HEIGHT;
+    int y0 = Board::Y_OFFSET + row * Board::CELL_HEIGHT;
     int y1 = y0 + Board::CELL_HEIGHT;
 
     return (x >= x0 && x < x1 && y >= y0 && y < y1);

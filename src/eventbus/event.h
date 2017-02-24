@@ -9,7 +9,8 @@ private:
 public:
     static const SHORT INITIALIZE  = 0;
     static const SHORT NEW_GAME = 1;
-    static const SHORT END_GAME = 2;
+    static const SHORT PUZZLE_SELECTED = 2;
+    static const SHORT END_GAME = 3;
     
     Event(SHORT type);
     virtual ~Event() {};
@@ -17,5 +18,5 @@ public:
     SHORT getType();
 };
 
-#endif /* EVENT_H */
+#endif
 

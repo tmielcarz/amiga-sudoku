@@ -15,5 +15,5 @@ public:
     void onEvent(Event *e);
 };
 
-#endif /* TITLE_SCREEN_H */
+#endif
 
