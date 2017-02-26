@@ -4,7 +4,8 @@ CXXFLAGS = -Os -Wall -fomit-frame-pointer
 OBJ = output/main.o output/board.o output/application.o output/board_block.o output/board_cell.o \
     output/board_hint_switch.o output/board_guess_switch.o output/board_abstract_switch.o \
     output/puzzle.o output/timer.o output/board_line.o output/title_screen.o output/abstract_screen.o \
-    output/event.o output/event_listener.o output/event_bus.o output/puzzle_select_screen.o output/puzzle_select_event.o
+    output/event.o output/event_listener.o output/event_bus.o output/puzzle_select_screen.o output/puzzle_select_event.o \
+    output/logger.o
 
 BIN = output/sudoku
 
@@ -70,3 +71,6 @@ output/puzzle_select_screen.o: src/title/puzzle_select_screen.cpp
 
 output/puzzle_select_event.o: src/title/puzzle_select_event.cpp
 	$(CXX) -c src/title/puzzle_select_event.cpp -o output/puzzle_select_event.o $(CXXFLAGS)
+
+output/logger.o: src/logger.cpp
+	$(CXX) -c src/logger.cpp -o output/logger.o $(CXXFLAGS)

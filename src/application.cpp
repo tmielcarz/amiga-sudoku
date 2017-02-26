@@ -2,6 +2,7 @@
 
 #include "application.h"
 #include "title/puzzle_select_event.h"
+#include "logger.h"
 
 Application::Application() {    
     gfxBase = (struct GfxBase *)OpenLibrary( "graphics.library", 0L );
@@ -73,7 +74,7 @@ Application::Application() {
     eventBus->registerListener((EventListener*) this);
     eventBus->registerListener((EventListener*) board);
     eventBus->registerListener((EventListener*) titleScreen);
-    eventBus->registerListener((EventListener*) puzzleSelectScreen);    
+    eventBus->registerListener((EventListener*) puzzleSelectScreen);          
 }
 
 Application::~Application() {        
@@ -142,7 +143,7 @@ void Application::loop() {
                         end = TRUE;
                         break;
                     case IDCMP_MOUSEMOVE:
-                        // printf("MOVE %d %d\n", xCoord, yCoord);
+                        // Logger::getInstance().log("MOVE %d %d", xCoord, yCoord);
                         if (currentScreen != NULL) {
                             currentScreen->onMove(xCoord, yCoord);
                         }                        
@@ -167,6 +168,7 @@ void Application::loop() {
             if (currentScreen != NULL) {
                 currentScreen->onTimeTick();
             }
+            Logger::getInstance().onTimeTick();
         }
     }        
 
@@ -177,17 +179,21 @@ void Application::onEvent(Event *e) {
     // printf("Application :: %d\n", e->getType());
     
     if (e->getType() == Event::INITIALIZE) {
+        Logger::getInstance().log("Initialize");
         currentScreen = titleScreen;
         currentScreen->draw();        
     }
     
     if (e->getType() == Event::NEW_GAME) {        
+        Logger::getInstance().log("New game");
         currentScreen = puzzleSelectScreen;
         currentScreen->draw();
     }
     
-    if (e->getType() == Event::PUZZLE_SELECTED) {
+    if (e->getType() == Event::PUZZLE_SELECTED) {        
         PuzzleSelectEvent *pse = (PuzzleSelectEvent *)e;
+        
+        Logger::getInstance().log("Puzzle selected: %s", pse->filename);
         
         Puzzle *puzzle;    
         puzzle = createPuzzles(pse->filename);
@@ -198,6 +204,7 @@ void Application::onEvent(Event *e) {
     }
 
     if (e->getType() == Event::END_GAME) {
+        Logger::getInstance().log("End game");
         
     }    
 }
